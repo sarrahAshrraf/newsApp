@@ -28,6 +28,9 @@ class DeatilsViewController: UIViewController {
         newsDescription.text = news?.desription
         newsAuthor.text = news?.author
         newsDate.text = news?.publishedAt
+        if let imageUrlString = news?.imageUrl, let url = URL(string: imageUrlString) {
+            newsImage.sd_setImage(with: url, placeholderImage: UIImage(named: "girl"))
+        }
         //bind db data to the view
         checkFavoriteStateAndUpdateUI()
         updateFavoriteButton()
@@ -81,10 +84,50 @@ class DeatilsViewController: UIViewController {
     
     @IBAction func favBtnAction(_ sender: UIButton) {
         
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        
+        if let article = article {
+            isFavorited.toggle()
+            article.isFavorited = isFavorited
+            
+            do {
+                try context.save()
+                updateFavoriteButton()
+            } catch {
+                print("Failed to update favorites: \(error)")
+            }
+        } else if let new = news {
+            let fetchRequest: NSFetchRequest<NewsArticle> = NewsArticle.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "title == %@", new.title)
+            
+            do {
+                let results = try context.fetch(fetchRequest)
+                if let existingArticle = results.first {
+                    existingArticle.isFavorited = !existingArticle.isFavorited
+                    isFavorited = existingArticle.isFavorited
+                } else {
+
+                    let newArticle = NewsArticle(context: context)
+                    newArticle.title = new.title
+                    newArticle.desription = new.desription
+                    newArticle.author = new.author
+                    newArticle.publishedAt = new.publishedAt
+                    newArticle.imageUrl = new.imageUrl
+                    newArticle.isFavorited = true
+                    isFavorited = true
+                }
+                try context.save()
+                updateFavoriteButton()
+            } catch {
+                print("Error in fav btn \(error)")
+            }
+        }
+        
+        
+        
     }
     
     private var isFavorited = false {
-        
         didSet{
             let imageName = isFavorited ? "heart.fill" : "heart"
             favBtnImage.setImage(UIImage(systemName: imageName), for: .normal)

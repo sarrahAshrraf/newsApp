@@ -21,11 +21,18 @@ class NewsController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-
+        setupActivityIndicator()
+        setupReachbility()
+        fetchFromDB()
 
     }
-
+    func setupActivityIndicator() {
+        activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.center = self.view.center
+        self.view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+    }
+    
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -40,19 +47,20 @@ class NewsController: UICollectionViewController, UICollectionViewDelegateFlowLa
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = (collectionView.dequeueReusableCell(withReuseIdentifier: "homeCell", for: indexPath) as? NewsCell)!
     
-        if usingDB{
-            
-            
-            
-            
-            
-            
+        if usingDB {
+            let article = newsFromDB[indexPath.row]
+            if let imageUrlString = article.imageUrl, let imageUrl = URL(string: imageUrlString) {
+                cell.newImg.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "loading"))
+            }
+            cell.newAuthor.text = article.author
+        } else {
+            let article = newsFromAPI[indexPath.row]
+            if let imageUrlString = article.imageUrl, let imageUrl = URL(string: imageUrlString) {
+                cell.newImg.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "loading"))
+            }
+            cell.newAuthor.text = article.author
         }
-        
-        
-        
-        
-        
+    
         
         return cell
     }
@@ -111,9 +119,25 @@ class NewsController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func deleteFromDB(_ articles: [NewsPOJO]){
         
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<NewsArticle> = NewsArticle.fetchRequest()
         
+        var deletedObj = [NewsArticle]()
         
-        
+        articles.forEach { article in
+            fetchRequest.predicate = NSPredicate(format: "title ==%@ AND isFavorited == NO", article.title)
+            do{
+                let result = try context.fetch(fetchRequest)
+                deletedObj.append(contentsOf: result)
+            } catch {
+                print("error in deletion \(error)")
+                           }
+        }
+        for newObject in deletedObj{
+            context.delete(newObject)
+        }
+        do{try context.save()}
+        catch{print("error in saving\(error.localizedDescription)")}
         
     }
     
@@ -141,5 +165,18 @@ class NewsController: UICollectionViewController, UICollectionViewDelegateFlowLa
         return CGSize(width: view.frame.width / 2.5, height: view.frame.height / 4)
     }
     
-    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let detailsVC = storyboard.instantiateViewController(withIdentifier: "detailsVC") as? DeatilsViewController {
+            if usingDB {
+                let article = newsFromDB[indexPath.item]
+                detailsVC.article = article
+            } else {
+                let article = newsFromAPI[indexPath.item]
+                detailsVC.news = article
+            }
+            detailsVC.title = "News Details"
+            navigationController?.pushViewController(detailsVC, animated: true)
+        }
+    }
 }

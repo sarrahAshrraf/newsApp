@@ -6,84 +6,144 @@
 //
 
 import UIKit
+import CoreData
+import SDWebImage
 
 class FavoriteTableViewController: UITableViewController {
-
+  
+    var favorites = [NewsArticle]()
+    var noData :UILabel!
+   
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchFavorites()
+        updateBackgroundView()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        fetchFavorites()
+        updateBackgroundView()
+        
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return favorites.count
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+        let article = favorites[indexPath.item]
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let detailsVC = storyboard.instantiateViewController(withIdentifier: "detailsVC") as? DeatilsViewController {
+            detailsVC.article = article
+            detailsVC.title = "News Details"
+            navigationController?.pushViewController(detailsVC, animated: true)
+
+            
+        }
     }
 
-    /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+    func fetchFavorites() {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<NewsArticle> = NewsArticle.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "isFavorited == %@", NSNumber(value: true))
+        
+        do {
+            favorites = try context.fetch(fetchRequest)
+            tableView.reloadData()
+            updateBackgroundView()
+        } catch let error as NSError {
+            print("couldnt fetch \(error), \(error.userInfo)")
+        }
+        
+    }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return !favorites.isEmpty
+    }
+    
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let alertController = UIAlertController(title: "confirm deletetion", message: "Do you really want to delete this?", preferredStyle: .alert)
+                   
+                   let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+                       self.deleteFavorite(at: indexPath)
+                   }
+                   
+            let cancelAction = UIAlertAction(title: "Cancel", style: .destructive) { _ in
+                       print("Cancel button tapped.")
+                   }
+                   
+                   alertController.addAction(okAction)
+                   alertController.addAction(cancelAction)
+                   
+                   self.present(alertController, animated: true, completion: nil)
+           
+        }
+    }
+    func deleteFavorite(at indexPath: IndexPath) {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let newsArticleToDelete = favorites[indexPath.row]
+        context.delete(newsArticleToDelete)
 
-        // Configure the cell...
+        do {
+            try context.save()
+            favorites.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+
+        } catch {
+            print("couldnt delete the article inn fav table \(error)")
+        }
+        updateBackgroundView()
+    }
+    
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "FavoriteCell", for: indexPath)
+
+        if favorites.isEmpty {
+            let messageLabel = UILabel()
+            messageLabel.text = "There are no Favorites yet"
+            messageLabel.textColor = .gray
+            messageLabel.numberOfLines = 0
+            messageLabel.textAlignment = .center
+            messageLabel.font = UIFont.systemFont(ofSize: 16)
+            messageLabel.sizeToFit()
+            tableView.backgroundView = messageLabel
+        } else {
+            tableView.backgroundView = nil
+            let newsArticle = favorites[indexPath.row]
+            cell.textLabel?.text = newsArticle.title
+
+        }
+
 
         return cell
     }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    
+    private func updateBackgroundView() {
+        if favorites.isEmpty {
+            let noFavLabel = UILabel()
+            noFavLabel.text = "There are no Favorites yet"
+            noFavLabel.textColor = .gray
+            noFavLabel.numberOfLines = 0
+            noFavLabel.textAlignment = .center
+            noFavLabel.font = UIFont.systemFont(ofSize: 16)
+            noFavLabel.sizeToFit()
+            tableView.backgroundView = noFavLabel
+        } else {
+            tableView.backgroundView = nil
+        }
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
