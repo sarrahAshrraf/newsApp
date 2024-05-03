@@ -24,7 +24,7 @@
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="C3z-ye-bAz" customClass="NewsCell" customModule="NEWSApp" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="homeCell" id="C3z-ye-bAz" customClass="NewsCell" customModule="NEWSApp" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="168" height="154"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="hcs-oc-Hya">
@@ -56,7 +56,7 @@
                             <outlet property="delegate" destination="DIB-BV-tGg" id="82B-np-onG"/>
                         </connections>
                     </collectionView>
-                    <tabBarItem key="tabBarItem" title="Home" image="homekit" catalog="system" id="yXY-IX-Ypm"/>
+                    <tabBarItem key="tabBarItem" title="Home" image="house.circle.fill" catalog="system" id="yXY-IX-Ypm"/>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1nm-ea-Q7x" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -65,7 +65,7 @@
         <!--Item-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController storyboardIdentifier="detailsVC" id="BYZ-38-t0r" customClass="ViewController" customModule="NEWSApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="detailsVC" id="BYZ-38-t0r" customClass="DeatilsViewController" customModule="NEWSApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -102,6 +102,9 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" image="heart" catalog="system"/>
+                                <connections>
+                                    <action selector="favBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="aBS-Jb-tEp"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bEE-dh-9R5">
                                 <rect key="frame" x="274" y="392" width="103" height="21"/>
@@ -116,6 +119,14 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Item" id="obp-rw-nH5"/>
                     <navigationItem key="navigationItem" id="WGx-Pa-vPP"/>
+                    <connections>
+                        <outlet property="favBtnImage" destination="MFD-eP-ZIu" id="jV7-Wr-YSo"/>
+                        <outlet property="newsAuthor" destination="8bC-Xf-vdC" id="OXZ-89-uk2"/>
+                        <outlet property="newsDate" destination="bEE-dh-9R5" id="2ff-gf-SBP"/>
+                        <outlet property="newsDescription" destination="mUC-71-Pdp" id="erz-Sh-S1n"/>
+                        <outlet property="newsImage" destination="Ryk-rk-4Gp" id="dDT-gz-3Pm"/>
+                        <outlet property="newsTitle" destination="9NO-03-uxR" id="3Y1-aS-Sj4"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -146,21 +157,53 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="GPI-hM-AVB"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="tTw-c1-cl5">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
                         <segue destination="DIB-BV-tGg" kind="relationship" relationship="viewControllers" id="bSk-al-tQ9"/>
+                        <segue destination="cgf-tp-LZv" kind="relationship" relationship="viewControllers" id="4GG-Fs-m4i"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zqM-d1-gqx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="962.59541984732823" y="-27.464788732394368"/>
         </scene>
+        <!--Favorites-->
+        <scene sceneID="J8I-fb-8jv">
+            <objects>
+                <tableViewController id="cgf-tp-LZv" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="7XC-lm-AbN">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="favCell" rowHeight="76" id="mqi-qD-y3J">
+                                <rect key="frame" x="0.0" y="50" width="393" height="76"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="mqi-qD-y3J" id="5TX-Mw-vqd">
+                                    <rect key="frame" x="0.0" y="0.0" width="393" height="76"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="cgf-tp-LZv" id="zhB-rZ-Tmn"/>
+                            <outlet property="delegate" destination="cgf-tp-LZv" id="k1F-tO-1eH"/>
+                        </connections>
+                    </tableView>
+                    <tabBarItem key="tabBarItem" title="Favorites" image="heart.circle.fill" catalog="system" id="Zjl-Cd-JB5"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="t79-pt-rmB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1791.6030534351144" y="470.42253521126764"/>
+        </scene>
     </scenes>
     <resources>
         <image name="heart" catalog="system" width="128" height="107"/>
-        <image name="homekit" catalog="system" width="128" height="104"/>
+        <image name="heart.circle.fill" catalog="system" width="128" height="123"/>
+        <image name="house.circle.fill" catalog="system" width="128" height="123"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -6,83 +6,140 @@
 //
 
 import UIKit
+import SDWebImage
+import Reachability
+import CoreData
 
-private let reuseIdentifier = "Cell"
-
-class NewsController: UICollectionViewController {
-
+class NewsController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+   
+    var newsFromAPI = [NewsPOJO]()
+    var newsFromDB = [NewsArticle]()
+    var usingDB = false
+    var activityIndicator: UIActivityIndicatorView!
+    let reachability = try! Reachability()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
 
-        // Register cell classes
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
 
-        // Do any additional setup after loading the view.
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-    // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 0
+            //put flag usingDB to detect the correct count
+        return usingDB ? newsFromDB.count : newsFromAPI.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
+        let cell = (collectionView.dequeueReusableCell(withReuseIdentifier: "homeCell", for: indexPath) as? NewsCell)!
     
-        // Configure the cell
-    
+        if usingDB{
+            
+            
+            
+            
+            
+            
+        }
+        
+        
+        
+        
+        
+        
         return cell
     }
 
-    // MARK: UICollectionViewDelegate
-
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
+   
+    func setupReachbility(){
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: .reachabilityChanged, object: reachability)
+        do { try reachability.startNotifier()}
+        catch {
+            print("error in start notifier\(error.localizedDescription)")
+        }
     }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
     
+    
+    @objc func reachabilityChanged(note: Notification) {
+        let reachability = note.object as! Reachability
+        if reachability.connection != .unavailable //both wifi and cellular
+        { //fetch data from api => network is on
+            fetchData { [weak self] fetchedNews in
+                self?.newsFromAPI = fetchedNews
+                self?.usingDB = false
+                DispatchQueue.main.async {
+                    self?.activityIndicator.stopAnimating()
+                    self?.collectionView.reloadData()
+                    self?.deleteFromDB(fetchedNews)
+                    self?.saveToDB(fetchedNews)
+                }
+            }
+            
+        } else {
+            //fetch the data from db => network is off
+            fetchFromDB()
+            
+        }
+        
+        
     }
-    */
-
+    
+    func saveToDB(_ articles: [NewsPOJO]){
+        
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+ 
+        for article in articles {
+            let savedArtcile = NewsArticle(context: context)
+            savedArtcile.title = article.title
+            savedArtcile.author = article.author
+            savedArtcile.desription = article.desription
+            savedArtcile.imageUrl = article.imageUrl
+            savedArtcile.publishedAt = article.publishedAt
+            savedArtcile.isFavorited = false //beacuse we are saving all the data from api, not the favorite data
+        }
+        
+        do{ try context.save()}
+        catch{print("error in saving data \(error.localizedDescription)")}
+    }
+    
+    func deleteFromDB(_ articles: [NewsPOJO]){
+        
+        
+        
+        
+        
+    }
+    
+    func fetchFromDB(){
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<NewsArticle> = NewsArticle.fetchRequest()
+        do{
+            let articles = try context.fetch(fetchRequest)
+            self.newsFromDB = articles
+            self.usingDB = true
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.collectionView.reloadData()
+            }
+        }
+        catch {
+            print("error in fetching from db \(error.localizedDescription)")
+        }
+        
+        
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width / 2.5, height: view.frame.height / 4)
+    }
+    
+    
 }

@@ -22,6 +22,9 @@
 		E74A13562BE0CBF30030CA9A /* NEWSAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74A13552BE0CBF30030CA9A /* NEWSAppUITestsLaunchTests.swift */; };
 		E74A13632BE0CE320030CA9A /* NewsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74A13622BE0CE320030CA9A /* NewsController.swift */; };
 		E74A13652BE0CE440030CA9A /* NewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74A13642BE0CE440030CA9A /* NewsCell.swift */; };
+		E78ABBC72BE515FD00421BA4 /* DeatilsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78ABBC62BE515FD00421BA4 /* DeatilsViewController.swift */; };
+		E78ABBC92BE5162600421BA4 /* FavoriteTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78ABBC82BE5162600421BA4 /* FavoriteTableViewController.swift */; };
+		E78ABBCB2BE5166F00421BA4 /* NewsPOJO.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78ABBCA2BE5166F00421BA4 /* NewsPOJO.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +69,9 @@
 		E74A13552BE0CBF30030CA9A /* NEWSAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NEWSAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		E74A13622BE0CE320030CA9A /* NewsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsController.swift; sourceTree = "<group>"; };
 		E74A13642BE0CE440030CA9A /* NewsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsCell.swift; sourceTree = "<group>"; };
+		E78ABBC62BE515FD00421BA4 /* DeatilsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeatilsViewController.swift; sourceTree = "<group>"; };
+		E78ABBC82BE5162600421BA4 /* FavoriteTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteTableViewController.swift; sourceTree = "<group>"; };
+		E78ABBCA2BE5166F00421BA4 /* NewsPOJO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsPOJO.swift; sourceTree = "<group>"; };
 		F28F22CFA532A0D9D64EE3CB /* Pods_NEWSApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NEWSApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -117,7 +123,6 @@
 				91CF10545E6F45D6EA216A93 /* Pods-NEWSAppTests.debug.xcconfig */,
 				4A3A915A840FD55EF8BCEAEF /* Pods-NEWSAppTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -156,6 +161,9 @@
 				E74A13382BE0CBF00030CA9A /* NEWSApp.xcdatamodeld */,
 				E74A13622BE0CE320030CA9A /* NewsController.swift */,
 				E74A13642BE0CE440030CA9A /* NewsCell.swift */,
+				E78ABBC62BE515FD00421BA4 /* DeatilsViewController.swift */,
+				E78ABBC82BE5162600421BA4 /* FavoriteTableViewController.swift */,
+				E78ABBCA2BE5166F00421BA4 /* NewsPOJO.swift */,
 			);
 			path = NEWSApp;
 			sourceTree = "<group>";
@@ -417,8 +425,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				E74A13342BE0CBEF0030CA9A /* ViewController.swift in Sources */,
+				E78ABBC92BE5162600421BA4 /* FavoriteTableViewController.swift in Sources */,
 				E74A13302BE0CBEF0030CA9A /* AppDelegate.swift in Sources */,
+				E78ABBC72BE515FD00421BA4 /* DeatilsViewController.swift in Sources */,
 				E74A133A2BE0CBF00030CA9A /* NEWSApp.xcdatamodeld in Sources */,
+				E78ABBCB2BE5166F00421BA4 /* NewsPOJO.swift in Sources */,
 				E74A13632BE0CE320030CA9A /* NewsController.swift in Sources */,
 				E74A13652BE0CE440030CA9A /* NewsCell.swift in Sources */,
 				E74A13322BE0CBEF0030CA9A /* SceneDelegate.swift in Sources */,
@@ -514,7 +525,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -577,7 +588,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
